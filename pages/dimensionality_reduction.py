@@ -54,20 +54,14 @@ else:
         st.subheader("📂 PCA Artifacts")
 
         # Use the artifacts directory, not a single file
-        artifacts_dir = r"mlartifacts\150500204737805743\3ee91f4ff41d42259a433095768e61e0\artifacts"
-
-        if os.path.exists(artifacts_dir):
-            for art in os.listdir(artifacts_dir):
-                art_file = os.path.join(artifacts_dir, art)
-                if art.endswith(".png"):
-                    st.image(art_file, caption=art)
-                elif art.endswith(".csv"):
-                    df = pd.read_csv(art_file)
-                    st.dataframe(df.head())
-                    with open(art_file, "rb") as f:
-                        st.download_button("Download CSV", data=f, file_name=art)
+          # PCA Artifacts in etc/
+        pca_plot_path = "etc/pca_variance_plot.png"
+        
+        if os.path.exists(pca_plot_path):
+            st.subheader("📊 PCA Variance Plot")
+            st.image(pca_plot_path, caption="PCA Variance Explained")
         else:
-            st.warning("No artifacts folder found for this run.")
+            st.warning("PCA variance plot not found in /etc folder.")
 
 # -----------------------------------------------------------
 # LOAD UMAP EXPERIMENT
@@ -100,19 +94,38 @@ else:
 
         # Show UMAP artifacts
         st.subheader("📂 UMAP Artifacts")
-
-        # Use the exact folder path from your image
-        umap_artifacts_dir = r"mlartifacts\830657570369720766\64cd0281de57407f8a3566046961f2c3\artifacts"
-
-        if os.path.exists(umap_artifacts_dir):
-            for art in os.listdir(umap_artifacts_dir):
-                art_file = os.path.join(umap_artifacts_dir, art)
-                if art.endswith(".png"):
-                    st.image(art_file, caption=art)
-                elif art.endswith(".csv"):
-                    df = pd.read_csv(art_file)
-                    st.dataframe(df.head())
-                    with open(art_file, "rb") as f:
-                        st.download_button("Download CSV", data=f, file_name=art)
+        
+        st.header("🌀 UMAP Viewer")
+        
+        umap_plot_1 = "etc/umap_crime_type.png"
+        umap_plot_2 = "etc/umap_day_night.png"
+        umap_csv = "etc/umap_embeddings.csv"
+        
+        # UMAP Image 1
+        if os.path.exists(umap_plot_1):
+            st.subheader("🔹 UMAP — Crime Type")
+            st.image(umap_plot_1, caption="UMAP Clustering by Crime Type")
         else:
-            st.warning("No artifacts found in the specified UMAP folder.")
+            st.warning("UMAP crime type image not found.")
+        
+        # UMAP Image 2
+        if os.path.exists(umap_plot_2):
+            st.subheader("🔹 UMAP — Day vs Night Pattern")
+            st.image(umap_plot_2, caption="UMAP Day–Night Embeddings")
+        else:
+            st.warning("UMAP day/night image not found.")
+        
+        # UMAP Embeddings CSV
+        if os.path.exists(umap_csv):
+            st.subheader("📄 UMAP Embeddings CSV")
+            df = pd.read_csv(umap_csv)
+            st.dataframe(df.head())
+        
+            with open(umap_csv, "rb") as f:
+                st.download_button(
+                    label="Download UMAP Embeddings CSV",
+                    data=f,
+                    file_name="umap_embeddings.csv"
+                )
+        else:
+            st.warning("UMAP embeddings CSV not found.")
