@@ -1,0 +1,4 @@
+*.pkl filter=lfs diff=lfs merge=lfs -text
+*.csv filter=lfs diff=lfs merge=lfs -text
+data/Crimes_2023_to_2025_CLEANED.csv filter=lfs diff=lfs merge=lfs -text
+data/Crimes_2023_to_Present_2025.csv filter=lfs diff=lfs merge=lfs -text
