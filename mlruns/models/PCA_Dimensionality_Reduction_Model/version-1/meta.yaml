@@ -1,0 +1,15 @@
+creation_timestamp: 1763842474456
+current_stage: None
+deployment_job_state: null
+description: ''
+last_updated_timestamp: 1763842474456
+model_id: m-d7e5ef0c26d246308e31c96ee68a22ff
+name: PCA_Dimensionality_Reduction_Model
+run_id: 3ee91f4ff41d42259a433095768e61e0
+run_link: ''
+source: models:/m-d7e5ef0c26d246308e31c96ee68a22ff
+status: READY
+status_message: null
+storage_location: mlflow-artifacts:/150500204737805743/models/m-d7e5ef0c26d246308e31c96ee68a22ff/artifacts
+user_id: null
+version: 1

@@ -1,0 +1,15 @@
+creation_timestamp: 1763841088182
+current_stage: None
+deployment_job_state: null
+description: ''
+last_updated_timestamp: 1763841088182
+model_id: m-851c9d3510a74098995e5350199efcfd
+name: UMAP_Dimensionality_Reduced_Model
+run_id: 64cd0281de57407f8a3566046961f2c3
+run_link: ''
+source: models:/m-851c9d3510a74098995e5350199efcfd
+status: READY
+status_message: null
+storage_location: mlflow-artifacts:/830657570369720766/models/m-851c9d3510a74098995e5350199efcfd/artifacts
+user_id: null
+version: 1

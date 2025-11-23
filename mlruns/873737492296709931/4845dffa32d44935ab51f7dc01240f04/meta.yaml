@@ -1,0 +1,14 @@
+artifact_uri: mlflow-artifacts:/873737492296709931/4845dffa32d44935ab51f7dc01240f04/artifacts
+end_time: 1763837953720
+entry_point_name: ''
+experiment_id: '873737492296709931'
+lifecycle_stage: active
+run_id: 4845dffa32d44935ab51f7dc01240f04
+run_name: KMeans_Experiment
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1763837939063
+status: 3
+tags: []
+user_id: Tasneem Inayath

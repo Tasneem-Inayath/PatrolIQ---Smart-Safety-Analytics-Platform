@@ -1,0 +1,10 @@
+artifact_location: mlflow-artifacts:/830657570369720766/models/m-851c9d3510a74098995e5350199efcfd/artifacts
+creation_timestamp: 1763841054495
+experiment_id: '830657570369720766'
+last_updated_timestamp: 1763841088110
+model_id: m-851c9d3510a74098995e5350199efcfd
+model_type: ''
+name: UMAP_Model
+source_run_id: 64cd0281de57407f8a3566046961f2c3
+status: 2
+status_message: null
