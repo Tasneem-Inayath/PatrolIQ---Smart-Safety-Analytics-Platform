@@ -17,7 +17,7 @@ st.write("This page loads all clustering runs logged inside the **PatrolIQ-Clust
 # -----------------------------------------------------------
 # CONNECT TO MLflow
 # -----------------------------------------------------------
-mlflow.set_tracking_uri("http://127.0.0.1:5000")
+mlflow.set_tracking_uri("file:./mlruns")
 EXPERIMENT_NAME = "PatrolIQ-Clustering"
 client = MlflowClient()
 
@@ -52,6 +52,10 @@ run_id = selected_run.info.run_id
 
 st.success(f"Loaded Run ID: {run_id}")
 
+
+# -----------------------------------------------------------
+# SHOW METRICS + PARAMETERS + ARTIFACTS
+# -----------------------------------------------------------
 # -----------------------------------------------------------
 # SHOW METRICS + PARAMETERS + ARTIFACTS
 # -----------------------------------------------------------
@@ -62,29 +66,19 @@ with st.expander("📘 Run Details"):
     st.write("### Metrics")
     st.json(selected_run.data.metrics)
 
-    st.write("### Artifacts List")
-    artifacts = client.list_artifacts(run_id)
-    st.write(artifacts)
-
-    # ---- Display artifacts correctly ----
     st.write("### Artifact Previews")
 
-    for art in artifacts:
-        art_path = art.path
+    # Manually list known artifact files for each run
+    known_artifacts = {
+        "8eda283468304548866781378f5627c4": "dbscan_clusters.png",
+        "93c52cd20d7f4289884d24e19422804b": "hier_clusters.png",
+        "4845dffa32d44935ab51f7dc01240f04": "kmeans_clusters.png"
+    }
 
-        try:
-            local_file = client.download_artifacts(run_id, art_path)
+    run_artifact_file = known_artifacts.get(run_id)
 
-            if art_path.lower().endswith(".png"):
-                st.image(local_file, caption=f"Image: {art_path}")
-
-            elif art_path.lower().endswith(".csv"):
-                df_art = pd.read_csv(local_file)
-                st.write(f"📄 CSV Preview — {art_path}")
-                st.dataframe(df_art)
-
-            else:
-                st.write(f"📁 Downloaded: {local_file}")
-
-        except Exception as e:
-            st.error(f"Error loading artifact {art_path}: {e}")
+    if run_artifact_file:
+        artifact_path = f"mlartifacts/873737492296709931/{run_id}/artifacts/{run_artifact_file}"
+        st.image(artifact_path, caption=f"🖼️ {run_artifact_file}")
+    else:
+        st.warning("No known artifact file mapped for this run.")

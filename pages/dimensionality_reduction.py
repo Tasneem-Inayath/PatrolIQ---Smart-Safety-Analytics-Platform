@@ -2,18 +2,25 @@ import streamlit as st
 import mlflow
 from mlflow.tracking import MlflowClient
 import pandas as pd
+import os
 
 # -----------------------------------------------------------
 # PAGE TITLE
 # -----------------------------------------------------------
 st.title("🎛️ PatrolIQ — Dimensionality Reduction Viewer (PCA & UMAP)")
 
-TRACKING_URI = "http://127.0.0.1:5000"
 EXPERIMENT_NAME = "PatrolIQ-PCA"  # For PCA
 UMAP_EXPERIMENT_NAME = "UMAP_Crime_Clusters_Registered"  # For UMAP
 
-mlflow.set_tracking_uri(TRACKING_URI)
+mlflow.set_tracking_uri("file:./mlruns")
 client = MlflowClient()
+
+# -----------------------------------------------------------
+# Helper: get artifact folder path
+# -----------------------------------------------------------
+def get_artifact_folder(run_id):
+    # MLflow stores artifacts under mlartifacts/<experiment_id>/<run_id>/artifacts
+    return os.path.join("mlartifacts", run_id, "artifacts")
 
 # -----------------------------------------------------------
 # LOAD PCA EXPERIMENT
@@ -41,31 +48,33 @@ else:
         st.subheader("📊 PCA Metrics")
         st.json(pca_run.data.metrics)
 
-        # Load PCA model
-        try:
-            pca_model = mlflow.sklearn.load_model(f"runs:/{pca_run_id}/pca_model")
-            st.success("PCA Model Loaded Successfully!")
-        except:
-            st.warning("No PCA model found in this run.")
 
-        # Show PCA artifacts (like scree plot)
+        # Show PCA artifacts
+        # Show PCA artifacts
         st.subheader("📂 PCA Artifacts")
-        artifacts = client.list_artifacts(pca_run_id)
-        for art in artifacts:
-            if art.path.endswith(".png"):
-                st.image(client.download_artifacts(pca_run_id, art.path))
-            elif art.path.endswith(".csv"):
-                df = pd.read_csv(client.download_artifacts(pca_run_id, art.path))
-                st.dataframe(df.head())
-                st.download_button("Download CSV", data=open(client.download_artifacts(pca_run_id, art.path), "rb"),
-                                   file_name=art.path)
+
+        # Use the artifacts directory, not a single file
+        artifacts_dir = r"mlartifacts\150500204737805743\3ee91f4ff41d42259a433095768e61e0\artifacts"
+
+        if os.path.exists(artifacts_dir):
+            for art in os.listdir(artifacts_dir):
+                art_file = os.path.join(artifacts_dir, art)
+                if art.endswith(".png"):
+                    st.image(art_file, caption=art)
+                elif art.endswith(".csv"):
+                    df = pd.read_csv(art_file)
+                    st.dataframe(df.head())
+                    with open(art_file, "rb") as f:
+                        st.download_button("Download CSV", data=f, file_name=art)
+        else:
+            st.warning("No artifacts folder found for this run.")
 
 # -----------------------------------------------------------
 # LOAD UMAP EXPERIMENT
 # -----------------------------------------------------------
 st.header("🌀 UMAP Viewer")
 
-umap_experiment = client.get_experiment_by_name("PatrolIQ-UMAP")  # Adjust to your registered UMAP experiment name
+umap_experiment = client.get_experiment_by_name("PatrolIQ-UMAP")
 if umap_experiment is None:
     st.error(f"Experiment 'PatrolIQ-UMAP' not found.")
 else:
@@ -86,21 +95,24 @@ else:
         st.subheader("📊 UMAP Metrics")
         st.json(umap_run.data.metrics)
 
-        # Load UMAP pyfunc model
-        try:
-            umap_model = mlflow.pyfunc.load_model(f"runs:/{umap_run_id}/UMAP_Model")
-            st.success("UMAP Model Loaded Successfully!")
-        except:
-            st.warning("No UMAP model found in this run.")
+
+        # Show UMAP artifacts
 
         # Show UMAP artifacts
         st.subheader("📂 UMAP Artifacts")
-        artifacts = client.list_artifacts(umap_run_id)
-        for art in artifacts:
-            if art.path.endswith(".png"):
-                st.image(client.download_artifacts(umap_run_id, art.path))
-            elif art.path.endswith(".csv"):
-                df = pd.read_csv(client.download_artifacts(umap_run_id, art.path))
-                st.dataframe(df.head())
-                st.download_button("Download CSV", data=open(client.download_artifacts(umap_run_id, art.path), "rb"),
-                                   file_name=art.path)
+
+        # Use the exact folder path from your image
+        umap_artifacts_dir = r"mlartifacts\830657570369720766\64cd0281de57407f8a3566046961f2c3\artifacts"
+
+        if os.path.exists(umap_artifacts_dir):
+            for art in os.listdir(umap_artifacts_dir):
+                art_file = os.path.join(umap_artifacts_dir, art)
+                if art.endswith(".png"):
+                    st.image(art_file, caption=art)
+                elif art.endswith(".csv"):
+                    df = pd.read_csv(art_file)
+                    st.dataframe(df.head())
+                    with open(art_file, "rb") as f:
+                        st.download_button("Download CSV", data=f, file_name=art)
+        else:
+            st.warning("No artifacts found in the specified UMAP folder.")

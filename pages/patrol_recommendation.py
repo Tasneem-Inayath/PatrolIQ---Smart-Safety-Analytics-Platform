@@ -14,8 +14,8 @@ st.title("🚓 Patrol Recommendation — PatrolIQ")
 # ----------------------------------------------------
 # MLflow Setup
 # ----------------------------------------------------
-TRACKING_URI = "http://127.0.0.1:5000"
-mlflow.set_tracking_uri(TRACKING_URI)
+
+mlflow.set_tracking_uri("file:./mlruns")
 client = MlflowClient()
 
 # ----------------------------------------------------
@@ -23,16 +23,19 @@ client = MlflowClient()
 # ----------------------------------------------------
 st.subheader("📦 Loading Registered Models")
 
-# Load Sklearn models safely
+
 try:
-    geo_model = mlflow.sklearn.load_model("models:/DBSCAN_Model/latest")
-    st.success("Loaded model: DBSCAN_Model")
+    geo_model = mlflow.sklearn.load_model( #type: ignore
+        "mlartifacts/873737492296709931/models/m-d639a32a33cc4edf947fa9d1a13a77e8/artifacts"
+    )
+    st.success("Loaded DBSCAN Model from artifacts folder 🎉")
 except Exception as e:
     st.error(f"❌ Failed to load DBSCAN_Model: {e}")
     geo_model = None
 
+
 try:
-    temp_model = mlflow.sklearn.load_model("models:/Temporal_KMeans_Model/latest")
+    temp_model = mlflow.sklearn.load_model("mlartifacts/702219540321182259/models/m-86961cb4b5214fd68795e12265b31ff2/artifacts")#type: ignore
     st.success("Loaded model: Temporal_KMeans_Model")
 except Exception as e:
     st.error(f"❌ Failed to load Temporal_KMeans_Model: {e}")

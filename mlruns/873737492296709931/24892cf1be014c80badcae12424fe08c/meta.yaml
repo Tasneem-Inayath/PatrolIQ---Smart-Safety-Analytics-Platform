@@ -1,8 +1,9 @@
 artifact_uri: mlflow-artifacts:/873737492296709931/24892cf1be014c80badcae12424fe08c/artifacts
+deleted_time: 1763910946027
 end_time: 1763839061870
 entry_point_name: ''
 experiment_id: '873737492296709931'
-lifecycle_stage: active
+lifecycle_stage: deleted
 run_id: 24892cf1be014c80badcae12424fe08c
 run_name: secretive-cat-917
 source_name: ''
