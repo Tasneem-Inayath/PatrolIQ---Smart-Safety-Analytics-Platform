@@ -1,4 +1,3 @@
-import os
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -10,8 +9,6 @@ import plotly.express as px
 
 st.set_page_config(page_title="Dimensionality Reduction Analysis", layout="wide")
 st.title("📊 Dimensionality Reduction: PCA & UMAP Crime Pattern Discovery")
-
-import mlflow
 
 
 # -------------------------
@@ -156,21 +153,15 @@ features_for_umap = [
 X_umap = df[features_for_umap]
 
 # ---- Load UMAP pyfunc model from MLflow ----
+umap_model = mlflow.pyfunc.load_model("models:/UMAP_Model/Production")
+# (use Production if promoted, else keep latest)
 
-# Direct path to model artifact
-umap_model_path = "mlruns/models/UMAP_Model/Production"
-
-# If Production folder does not exist, use version number
-# e.g. mlruns/models/UMAP_Model/1
-if not os.path.exists(umap_model_path):
-    umap_model_path = "mlruns/models/UMAP_Model/1"
-
-umap_model = mlflow.pyfunc.load_model(umap_model_path)
-
+# ---- Generate embedding ----
 umap_embedding = umap_model.predict(X_umap)
 
 df["UMAP1"] = umap_embedding[:, 0]
 df["UMAP2"] = umap_embedding[:, 1]
+
 # ---- Plot UMAP ----
 fig_umap = px.scatter(
     df.sample(12000, random_state=42),
