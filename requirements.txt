@@ -10,3 +10,4 @@ mlflow
 umap-learn
 plotly
 scipy
+joblib

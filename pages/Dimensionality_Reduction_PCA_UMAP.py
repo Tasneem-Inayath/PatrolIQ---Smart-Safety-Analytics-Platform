@@ -10,6 +10,8 @@ import plotly.express as px
 st.set_page_config(page_title="Dimensionality Reduction Analysis", layout="wide")
 st.title("📊 Dimensionality Reduction: PCA & UMAP Crime Pattern Discovery")
 
+import mlflow
+
 
 # -------------------------
 # Load Dataset
@@ -153,10 +155,12 @@ features_for_umap = [
 X_umap = df[features_for_umap]
 
 # ---- Load UMAP pyfunc model from MLflow ----
-umap_model = mlflow.pyfunc.load_model("models:/UMAP_Model/Production")
-# (use Production if promoted, else keep latest)
+mlflow.set_tracking_uri("file:./mlruns")
 
-# ---- Generate embedding ----
+umap_model = mlflow.pyfunc.load_model(
+    "models:/UMAP_Model/Production"
+)
+
 umap_embedding = umap_model.predict(X_umap)
 
 df["UMAP1"] = umap_embedding[:, 0]
