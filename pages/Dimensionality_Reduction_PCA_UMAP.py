@@ -127,42 +127,53 @@ st.pyplot(fig_feat)
 
 
 # -------------------------
-# 🔮 UMAP SECTION (MLflow-loaded, Reproducible)
+# UMAP SECTION
+# -------------------------
+features_for_umap = [
+    'Latitude','Longitude','Hour','Day','Month',
+    'CrimeSeverity','DistrictCluster'
+]
+# -------------------------
+# 📌 Load UMAP Model with Exact Training Feature Names
 # -------------------------
 st.subheader("🔮 UMAP Crime Embedding (Loaded from MLflow)")
 
-import mlflow.pyfunc
+import pandas as pd
 
-# Ensure required temporal features exist
+df = pd.read_csv("Crimes_2023_to_Present_2025_enhanced.csv").sample(20000, random_state=42)
+# ---- Extract datetime components ----
 df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
-df['Hour'] = df['Date'].dt.hour #type: ignore
-df['Day'] = df['Date'].dt.dayofweek   # 0=Mon, 6=Sun #type: ignore
-df['Month'] = df['Date'].dt.month #type: ignore
-
-# Exact feature order used during UMAP training
+df['Hour'] = df['Date'].dt.hour#type: ignore
+df['Day'] = df['Date'].dt.dayofweek  #type: ignore     # 0=Mon, 6=Sun
+df['Month'] = df['Date'].dt.month#type: ignore
+df['IsWeekend'] = df['Day'].apply(lambda x: 1 if x>=5 else 0)
 features_for_umap = [
-    'Latitude',
-    'Longitude',
-    'Hour',
-    'Day',
-    'Month',
-    'CrimeSeverity',
-    'DistrictCluster'
+    'Latitude','Longitude','Hour','Day','Month',
+    'CrimeSeverity','DistrictCluster'
 ]
 
 X_umap = df[features_for_umap]
+from sklearn.preprocessing import StandardScaler
 
-# ---- Load UMAP pyfunc model from MLflow ----
-umap_model = mlflow.pyfunc.load_model("models:/UMAP_Model/Production")
-# (use Production if promoted, else keep latest)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_umap)
+import umap
 
-# ---- Generate embedding ----
-umap_embedding = umap_model.predict(X_umap)
+umap_model = umap.UMAP(
+    n_neighbors=30,
+    min_dist=0.1,
+    metric='euclidean',
+    random_state=42
+)
 
-df["UMAP1"] = umap_embedding[:, 0]
-df["UMAP2"] = umap_embedding[:, 1]
+umap_2d = umap_model.fit_transform(X_scaled) # convert string list to python list
 
-# ---- Plot UMAP ----
+
+
+df["UMAP1"] = umap_2d[:,0]#type: ignore
+df["UMAP2"] = umap_2d[:,1]#type: ignore
+
+# Plot UMAP
 fig_umap = px.scatter(
     df.sample(12000, random_state=42),
     x="UMAP1", y="UMAP2",
@@ -172,5 +183,6 @@ fig_umap = px.scatter(
 )
 
 st.plotly_chart(fig_umap, use_container_width=True)
+
 
 st.success("✨ Dimensionality Reduction Analysis Loaded Successfully")
