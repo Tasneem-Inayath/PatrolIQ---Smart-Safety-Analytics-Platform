@@ -141,16 +141,22 @@ df['Month'] = df['Date'].dt.month #type: ignore
 
 # Exact feature order used during UMAP training
 features_for_umap = [
-    'Latitude','Longitude','Hour','Day','Month',
-    'CrimeSeverity','DistrictCluster'
+    'Latitude',
+    'Longitude',
+    'Hour',
+    'Day',
+    'Month',
+    'CrimeSeverity',
+    'DistrictCluster'
 ]
 
 X_umap = df[features_for_umap]
 
 # ---- Load UMAP pyfunc model from MLflow ----
-umap_model = mlflow.pyfunc.load_model("models:/UMAP_Model/latest")
+umap_model = mlflow.pyfunc.load_model("models:/UMAP_Model/Production")
+# (use Production if promoted, else keep latest)
 
-# ---- Generate embedding (NO scaling, NO fitting) ----
+# ---- Generate embedding ----
 umap_embedding = umap_model.predict(X_umap)
 
 df["UMAP1"] = umap_embedding[:, 0]
