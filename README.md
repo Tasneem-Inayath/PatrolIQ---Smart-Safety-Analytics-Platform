@@ -95,7 +95,9 @@ Using **MLflow-tracked models, unsupervised clustering, temporal analysis, dimen
 ✔ Interactive PCA and UMAP embedders revealing crime pattern structure
 
 ---
-
+##Link for Review:
+[Link](https://patroliq---smart-safety-analytics-platform-hfr7rzquo98x5pzdg2s.streamlit.app/)
+---
 ## 📌 Deployment Guide
 
 ### 1️⃣ Install Dependencies
